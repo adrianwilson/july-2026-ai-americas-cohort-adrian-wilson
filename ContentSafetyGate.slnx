@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ContentSafetyGate.Agent/ContentSafetyGate.Agent.csproj" />
+    <Project Path="src/ContentSafetyGate.Cli/ContentSafetyGate.Cli.csproj" />
+    <Project Path="src/ContentSafetyGate.Core/ContentSafetyGate.Core.csproj" />
+    <Project Path="src/ContentSafetyGate.Preprocessing/ContentSafetyGate.Preprocessing.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ContentSafetyGate.Eval/ContentSafetyGate.Eval.csproj" />
+  </Folder>
+</Solution>

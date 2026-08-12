@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContentSafetyGate.Core\ContentSafetyGate.Core.csproj" />
+    <ProjectReference Include="..\ContentSafetyGate.Preprocessing\ContentSafetyGate.Preprocessing.csproj" />
+    <ProjectReference Include="..\ContentSafetyGate.Agent\ContentSafetyGate.Agent.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Anthropic.SDK" Version="5.10.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.11" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
