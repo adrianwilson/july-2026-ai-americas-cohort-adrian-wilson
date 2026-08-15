@@ -41,14 +41,14 @@ case "${1:-}" in
         echo "Starting API on http://localhost:5000..."
         dotnet run --project "$API" --no-build &
         API_PID=$!
-        echo "Starting Angular UI on http://localhost:4200..."
-        (cd "$UI" && npx ng serve --open) &
+        echo "Starting Angular UI on http://localhost:4300..."
+        (cd "$UI" && npx ng serve --open --port 4300) &
         UI_PID=$!
         trap "kill $API_PID $UI_PID 2>/dev/null" EXIT
         echo ""
         echo "Demo running:"
         echo "  API: http://localhost:5000"
-        echo "  UI:  http://localhost:4200"
+        echo "  UI:  http://localhost:4300"
         echo "  Press Ctrl+C to stop"
         wait
         ;;
@@ -58,7 +58,7 @@ case "${1:-}" in
         dotnet run --project "$API" --no-build
         ;;
     ui)
-        cd "$UI" && npx ng serve --open
+        cd "$UI" && npx ng serve --open --port 4300
         ;;
     eval)
         echo "Building..."

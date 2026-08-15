@@ -4,7 +4,7 @@
   "scripts": {
     "demo": "concurrently \"npm run api\" \"npm run ui\"",
     "api": "dotnet run --project src/ContentSafetyGate.Api",
-    "ui": "cd src/ui && npx ng serve --open",
+    "ui": "cd src/ui && npx ng serve --open --port 4300",
     "build": "dotnet build && cd src/ui && npx ng build",
     "eval": "dotnet run --project src/ContentSafetyGate.Cli -- eval"
   },
