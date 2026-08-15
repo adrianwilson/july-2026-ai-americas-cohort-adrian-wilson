@@ -63,6 +63,72 @@ app.MapPost("/api/classify", async (ClassifyRequest request) =>
     });
 });
 
+// POST /api/classify/stream — SSE endpoint with progress updates
+app.MapPost("/api/classify/stream", async (HttpContext context, ClassifyRequest request) =>
+{
+    context.Response.ContentType = "text/event-stream";
+    context.Response.Headers.CacheControl = "no-cache";
+    context.Response.Headers.Connection = "keep-alive";
+
+    var writer = context.Response;
+
+    async Task SendEvent(string eventType, object? data = null)
+    {
+        var json = JsonSerializer.Serialize(new { type = eventType, data });
+        await writer.WriteAsync($"data: {json}\n\n");
+        await writer.Body.FlushAsync();
+    }
+
+    await SendEvent("started");
+
+    var extracted = new ExtractedDocument
+    {
+        DocId = request.DocId ?? $"doc-{DateTime.UtcNow:yyyyMMddHHmmss}",
+        RawText = request.Text,
+        DocType = Enum.TryParse<DocumentType>(request.DocType, true, out var dt) ? dt : DocumentType.PdfNative
+    };
+
+    // Step 1: PII Masking
+    await SendEvent("masking");
+    var sanitized = await masker.MaskAsync(extracted);
+    await SendEvent("masked", new
+    {
+        maskedText = sanitized.MaskedText,
+        piiDetected = sanitized.MaskSummary.DetectedTypes,
+        piiCount = sanitized.MaskSummary.TotalMasked
+    });
+
+    // Step 2: Agent Classification with progress callback
+    await SendEvent("agent_starting");
+    var result = await agent.ClassifyAsync(sanitized, async (step, detail) =>
+    {
+        await SendEvent(step, detail != null ? new { detail } : null);
+    });
+
+    // Final result
+    await SendEvent("complete", new ClassifyResponse
+    {
+        DocId = result.DocId,
+        Verdict = result.Verdict.ToString(),
+        Confidence = result.Confidence,
+        Rationale = result.Rationale,
+        PolicyCitations = result.PolicyCitations,
+        MaskedText = sanitized.MaskedText,
+        OriginalText = request.Text,
+        PiiDetected = result.MaskSummary.DetectedTypes,
+        PiiCount = result.MaskSummary.TotalMasked,
+        AgentSteps = result.Trace.Select(s => new AgentStepResponse
+        {
+            StepNumber = s.StepNumber,
+            ToolName = s.ToolName,
+            Input = s.Input,
+            Output = s.Output
+        }).ToList()
+    });
+
+    await SendEvent("done");
+});
+
 // POST /api/mask — preview PII masking only
 app.MapPost("/api/mask", async (MaskRequest request) =>
 {

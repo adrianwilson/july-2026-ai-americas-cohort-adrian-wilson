@@ -2,28 +2,45 @@
   <h1>Content Safety Gate</h1>
   <p class="subtitle">AI-assisted document classification for benefits administration</p>
 
-  <!-- Pipeline diagram -->
+  <!-- Pipeline visualization -->
   <div class="pipeline">
-    <div class="pipeline-step" [class.active]="loading">
+    <div class="pipeline-step deterministic"
+         [class.done]="isStageActive('masking')"
+         [class.running]="isStageRunning('masking')">
       <div class="step-icon">1</div>
       <div class="step-label">Upload</div>
     </div>
     <div class="pipeline-arrow">&rarr;</div>
-    <div class="pipeline-step deterministic" [class.active]="loading">
+    <div class="pipeline-step deterministic"
+         [class.done]="isStageActive('masked')"
+         [class.running]="isStageRunning('masking')">
       <div class="step-icon">2</div>
       <div class="step-label">PII Masking</div>
     </div>
     <div class="pipeline-arrow">&rarr;</div>
-    <div class="pipeline-step probabilistic" [class.active]="loading">
+    <div class="pipeline-step probabilistic"
+         [class.done]="isStageActive('complete')"
+         [class.running]="isStageRunning('retrieving') || isStageRunning('classifying')">
       <div class="step-icon">3</div>
       <div class="step-label">Agent Classification</div>
     </div>
     <div class="pipeline-arrow">&rarr;</div>
-    <div class="pipeline-step deterministic" [class.active]="loading">
+    <div class="pipeline-step deterministic"
+         [class.done]="isStageActive('complete')">
       <div class="step-icon">4</div>
       <div class="step-label">Human Review</div>
     </div>
   </div>
+
+  <!-- Status bar -->
+  @if (stage !== 'idle') {
+    <div class="status-bar" [class.complete]="stage === 'complete'">
+      @if (stage !== 'complete') {
+        <span class="spinner"></span>
+      }
+      {{ statusMessage }}
+    </div>
+  }
 
   <!-- Input -->
   <div class="input-section">
@@ -40,8 +57,8 @@
       rows="8"
     ></textarea>
 
-    <button class="classify-btn" (click)="classify()" [disabled]="loading || !documentText.trim()">
-      {{ loading ? currentStep : 'Classify Document' }}
+    <button class="classify-btn" (click)="classify()" [disabled]="stage !== 'idle' && stage !== 'complete' || !documentText.trim()">
+      {{ stage !== 'idle' && stage !== 'complete' ? 'Processing...' : 'Classify Document' }}
     </button>
   </div>
 
@@ -50,7 +67,28 @@
     <div class="error">{{ error }}</div>
   }
 
-  <!-- Results -->
+  <!-- PII Masking preview (shows as soon as masking is done) -->
+  @if (maskPreview) {
+    <div class="two-path">
+      <div class="path-card">
+        <h3>Original Text (Human Path)</h3>
+        <pre>{{ documentText }}</pre>
+      </div>
+      <div class="path-card">
+        <h3>Masked Text (AI Path)</h3>
+        <pre>{{ maskPreview.maskedText }}</pre>
+        @if (maskPreview.piiCount > 0) {
+          <div class="pii-summary">
+            PII detected: {{ maskPreview.piiDetected.join(', ') }} ({{ maskPreview.piiCount }} items masked)
+          </div>
+        } @else {
+          <div class="pii-summary pii-clean">No PII detected</div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Final Results -->
   @if (result) {
     <div class="results">
       <!-- Verdict -->
@@ -65,25 +103,6 @@
             <strong>Policy citations:</strong> {{ result.policyCitations.join(', ') }}
           </div>
         }
-      </div>
-
-      <!-- Two-path comparison -->
-      <div class="two-path">
-        <div class="path-card">
-          <h3>Original Text (Human Path)</h3>
-          <pre>{{ result.originalText }}</pre>
-        </div>
-        <div class="path-card">
-          <h3>Masked Text (AI Path)</h3>
-          <pre>{{ result.maskedText }}</pre>
-          @if (result.piiCount > 0) {
-            <div class="pii-summary">
-              PII detected: {{ result.piiDetected.join(', ') }} ({{ result.piiCount }} items masked)
-            </div>
-          } @else {
-            <div class="pii-summary pii-clean">No PII detected</div>
-          }
-        </div>
       </div>
 
       <!-- Agent trace -->

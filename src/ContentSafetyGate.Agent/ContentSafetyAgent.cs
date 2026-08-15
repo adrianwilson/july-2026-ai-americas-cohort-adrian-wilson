@@ -118,13 +118,20 @@ public class ContentSafetyAgent : IContentClassifier
         return "Classification recorded.";
     }
 
-    public async Task<ClassificationResult> ClassifyAsync(SanitizedDocument document)
+    public Task<ClassificationResult> ClassifyAsync(SanitizedDocument document)
+        => ClassifyAsync(document, null);
+
+    public async Task<ClassificationResult> ClassifyAsync(
+        SanitizedDocument document, Func<string, string?, Task>? onProgress)
     {
         _currentDocument = document;
         _currentTrace = [];
         _pendingResult = null;
 
         var tools = BuildToolDefinitions();
+
+        if (onProgress != null)
+            await onProgress("agent_started", null);
 
         var messages = new List<Message>
         {
@@ -173,6 +180,8 @@ public class ContentSafetyAgent : IContentClassifier
 
                 if (block.Name == "retrieve_policy")
                 {
+                    if (onProgress != null)
+                        await onProgress("retrieving_policy", inputJson);
                     using var doc = JsonDocument.Parse(inputJson);
                     var query = doc.RootElement.GetProperty("query").GetString() ?? "";
                     var topK = doc.RootElement.TryGetProperty("top_k", out var tk) ? tk.GetInt32() : 5;
@@ -180,6 +189,8 @@ public class ContentSafetyAgent : IContentClassifier
                 }
                 else if (block.Name == "classify")
                 {
+                    if (onProgress != null)
+                        await onProgress("classifying", inputJson);
                     using var doc = JsonDocument.Parse(inputJson);
                     var v = doc.RootElement.GetProperty("verdict").GetString() ?? "flag";
                     var r = doc.RootElement.GetProperty("rationale").GetString() ?? "";
