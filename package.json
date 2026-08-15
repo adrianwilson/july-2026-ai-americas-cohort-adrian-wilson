@@ -1,0 +1,14 @@
+{
+  "name": "content-safety-gate",
+  "private": true,
+  "scripts": {
+    "demo": "concurrently \"npm run api\" \"npm run ui\"",
+    "api": "dotnet run --project src/ContentSafetyGate.Api",
+    "ui": "cd src/ui && npx ng serve --open",
+    "build": "dotnet build && cd src/ui && npx ng build",
+    "eval": "dotnet run --project src/ContentSafetyGate.Cli -- eval"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
