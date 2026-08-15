@@ -72,9 +72,11 @@ app.MapPost("/api/classify/stream", async (HttpContext context, ClassifyRequest 
 
     var writer = context.Response;
 
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
     async Task SendEvent(string eventType, object? data = null)
     {
-        var json = JsonSerializer.Serialize(new { type = eventType, data });
+        var json = JsonSerializer.Serialize(new { type = eventType, data }, jsonOptions);
         await writer.WriteAsync($"data: {json}\n\n");
         await writer.Body.FlushAsync();
     }
