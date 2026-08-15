@@ -1,0 +1,6 @@
+@ContentSafetyGate.Api_HostAddress = http://localhost:5051
+
+GET {{ContentSafetyGate.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -3,6 +3,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 CLI="$ROOT/src/ContentSafetyGate.Cli"
+API="$ROOT/src/ContentSafetyGate.Api"
+UI="$ROOT/src/ui"
 
 # Check for API key
 if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
@@ -17,19 +19,47 @@ usage() {
     echo "Usage: ./run.sh <command> [args]"
     echo ""
     echo "Commands:"
+    echo "  demo              Start API + Angular UI for demo"
+    echo "  api               Start API server only (port 5000)"
+    echo "  ui                Start Angular dev server only (port 4200)"
     echo "  eval              Run gold evaluation dataset against the agent"
     echo "  classify <file>   Classify a document file (PDF, PNG, JPEG)"
     echo "  text <text>       Classify pre-extracted text"
-    echo "  build             Build the solution"
+    echo "  build             Build everything (API + CLI + UI)"
     echo "  test              Run unit tests"
     echo ""
     echo "Examples:"
+    echo "  ./run.sh demo"
     echo "  ./run.sh eval"
-    echo "  ./run.sh classify data/samples/test-doc.pdf"
     echo "  ./run.sh text 'Dear Office, please find attached...'"
 }
 
 case "${1:-}" in
+    demo)
+        echo "Building API..."
+        dotnet build "$API" --nologo -q
+        echo "Starting API on http://localhost:5000..."
+        dotnet run --project "$API" --no-build &
+        API_PID=$!
+        echo "Starting Angular UI on http://localhost:4200..."
+        (cd "$UI" && npx ng serve --open) &
+        UI_PID=$!
+        trap "kill $API_PID $UI_PID 2>/dev/null" EXIT
+        echo ""
+        echo "Demo running:"
+        echo "  API: http://localhost:5000"
+        echo "  UI:  http://localhost:4200"
+        echo "  Press Ctrl+C to stop"
+        wait
+        ;;
+    api)
+        dotnet build "$API" --nologo -q
+        echo "API running on http://localhost:5000"
+        dotnet run --project "$API" --no-build
+        ;;
+    ui)
+        cd "$UI" && npx ng serve --open
+        ;;
     eval)
         echo "Building..."
         dotnet build "$CLI" --nologo -q
@@ -56,6 +86,7 @@ case "${1:-}" in
         ;;
     build)
         dotnet build "$ROOT"
+        (cd "$UI" && npx ng build)
         ;;
     test)
         dotnet test "$ROOT"

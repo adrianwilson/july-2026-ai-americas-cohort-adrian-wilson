@@ -1,0 +1,159 @@
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+h1 { font-size: 28px; margin-bottom: 4px; }
+.subtitle { color: #64748b; margin-bottom: 32px; }
+
+.pipeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.pipeline-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  transition: all 0.3s;
+  &.deterministic { border-color: #22c55e; }
+  &.probabilistic { border-color: #f97316; border-style: dashed; }
+  &.active { opacity: 0.6; animation: pulse 1.5s infinite; }
+}
+
+.step-icon {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #e2e8f0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+
+.step-label { font-size: 13px; font-weight: 500; }
+.pipeline-arrow { color: #94a3b8; font-size: 20px; }
+
+.input-section { margin-bottom: 24px; }
+
+.samples {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  align-items: center; margin-bottom: 12px;
+}
+
+.samples-label { font-size: 13px; color: #64748b; font-weight: 500; }
+
+.sample-btn {
+  padding: 4px 12px; border: 1px solid #e2e8f0;
+  border-radius: 6px; background: white; font-size: 12px;
+  cursor: pointer;
+  &:hover { background: #f1f5f9; border-color: #94a3b8; }
+}
+
+textarea {
+  width: 100%; padding: 16px; border: 2px solid #e2e8f0;
+  border-radius: 8px; font-family: 'SF Mono', monospace;
+  font-size: 13px; resize: vertical;
+  &:focus { outline: none; border-color: #3b82f6; }
+}
+
+.classify-btn {
+  margin-top: 12px; padding: 12px 32px;
+  background: #1e293b; color: white; border: none;
+  border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer;
+  &:hover:not(:disabled) { background: #334155; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.error {
+  padding: 12px 16px; background: #fef2f2;
+  border: 1px solid #fecaca; border-radius: 8px;
+  color: #dc2626; margin-bottom: 16px;
+}
+
+.results { margin-top: 24px; }
+
+.verdict-card {
+  padding: 24px; border-radius: 12px; margin-bottom: 24px;
+  &.verdict-allow { background: #f0fdf4; border: 2px solid #22c55e; }
+  &.verdict-flag { background: #fffbeb; border: 2px solid #f59e0b; }
+  &.verdict-block { background: #fef2f2; border: 2px solid #ef4444; }
+}
+
+.verdict-header {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 12px;
+}
+
+.verdict-label { font-size: 24px; font-weight: 800; text-transform: uppercase; }
+.verdict-allow .verdict-label { color: #16a34a; }
+.verdict-flag .verdict-label { color: #d97706; }
+.verdict-block .verdict-label { color: #dc2626; }
+.verdict-confidence { font-size: 14px; color: #64748b; }
+.verdict-rationale { font-size: 14px; line-height: 1.6; color: #334155; }
+.citations { margin-top: 12px; font-size: 13px; color: #64748b; }
+
+.two-path {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 24px;
+}
+
+.path-card {
+  padding: 16px; border-radius: 8px;
+  background: #f8fafc; border: 1px solid #e2e8f0;
+  h3 { font-size: 14px; margin-bottom: 12px; color: #475569; }
+  pre { font-size: 12px; white-space: pre-wrap; word-break: break-word; line-height: 1.5; margin: 0; }
+}
+
+.pii-summary {
+  margin-top: 12px; padding: 8px 12px;
+  background: #fef3c7; border-radius: 6px;
+  font-size: 12px; font-weight: 500; color: #92400e;
+  &.pii-clean { background: #dcfce7; color: #166534; }
+}
+
+.trace-section { h3 { font-size: 16px; margin-bottom: 12px; } }
+
+.trace-step {
+  margin-bottom: 8px; border: 1px solid #e2e8f0;
+  border-radius: 8px; overflow: hidden;
+}
+
+.trace-header {
+  display: flex; gap: 12px; align-items: center;
+  padding: 12px 16px; background: #f8fafc;
+}
+
+.trace-number { font-weight: 700; font-size: 13px; }
+
+.trace-tool {
+  font-size: 13px; padding: 2px 8px;
+  background: #e0e7ff; color: #3730a3;
+  border-radius: 4px; font-family: monospace;
+}
+
+details summary {
+  padding: 8px 16px; font-size: 12px; color: #64748b; cursor: pointer;
+}
+
+.trace-detail {
+  padding: 12px 16px;
+  pre {
+    font-size: 11px; white-space: pre-wrap; word-break: break-word;
+    background: #f1f5f9; padding: 8px; border-radius: 4px; margin: 4px 0 12px;
+  }
+  strong { font-size: 12px; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContentSafetyGate.Core\ContentSafetyGate.Core.csproj" />
+    <ProjectReference Include="..\ContentSafetyGate.Preprocessing\ContentSafetyGate.Preprocessing.csproj" />
+    <ProjectReference Include="..\ContentSafetyGate.Agent\ContentSafetyGate.Agent.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Anthropic.SDK" Version="5.10.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

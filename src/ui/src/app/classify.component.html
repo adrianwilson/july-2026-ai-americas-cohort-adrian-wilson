@@ -1,0 +1,112 @@
+<div class="container">
+  <h1>Content Safety Gate</h1>
+  <p class="subtitle">AI-assisted document classification for benefits administration</p>
+
+  <!-- Pipeline diagram -->
+  <div class="pipeline">
+    <div class="pipeline-step" [class.active]="loading">
+      <div class="step-icon">1</div>
+      <div class="step-label">Upload</div>
+    </div>
+    <div class="pipeline-arrow">&rarr;</div>
+    <div class="pipeline-step deterministic" [class.active]="loading">
+      <div class="step-icon">2</div>
+      <div class="step-label">PII Masking</div>
+    </div>
+    <div class="pipeline-arrow">&rarr;</div>
+    <div class="pipeline-step probabilistic" [class.active]="loading">
+      <div class="step-icon">3</div>
+      <div class="step-label">Agent Classification</div>
+    </div>
+    <div class="pipeline-arrow">&rarr;</div>
+    <div class="pipeline-step deterministic" [class.active]="loading">
+      <div class="step-icon">4</div>
+      <div class="step-label">Human Review</div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-section">
+    <div class="samples">
+      <span class="samples-label">Sample documents:</span>
+      @for (doc of sampleDocs; track doc.label; let i = $index) {
+        <button class="sample-btn" (click)="loadSample(i)">{{ doc.label }}</button>
+      }
+    </div>
+
+    <textarea
+      [(ngModel)]="documentText"
+      placeholder="Paste document text here..."
+      rows="8"
+    ></textarea>
+
+    <button class="classify-btn" (click)="classify()" [disabled]="loading || !documentText.trim()">
+      {{ loading ? currentStep : 'Classify Document' }}
+    </button>
+  </div>
+
+  <!-- Error -->
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  <!-- Results -->
+  @if (result) {
+    <div class="results">
+      <!-- Verdict -->
+      <div class="verdict-card" [ngClass]="getVerdictClass()">
+        <div class="verdict-header">
+          <span class="verdict-label">{{ result.verdict }}</span>
+          <span class="verdict-confidence">{{ (result.confidence * 100).toFixed(0) }}% confidence</span>
+        </div>
+        <p class="verdict-rationale">{{ result.rationale }}</p>
+        @if (result.policyCitations.length > 0) {
+          <div class="citations">
+            <strong>Policy citations:</strong> {{ result.policyCitations.join(', ') }}
+          </div>
+        }
+      </div>
+
+      <!-- Two-path comparison -->
+      <div class="two-path">
+        <div class="path-card">
+          <h3>Original Text (Human Path)</h3>
+          <pre>{{ result.originalText }}</pre>
+        </div>
+        <div class="path-card">
+          <h3>Masked Text (AI Path)</h3>
+          <pre>{{ result.maskedText }}</pre>
+          @if (result.piiCount > 0) {
+            <div class="pii-summary">
+              PII detected: {{ result.piiDetected.join(', ') }} ({{ result.piiCount }} items masked)
+            </div>
+          } @else {
+            <div class="pii-summary pii-clean">No PII detected</div>
+          }
+        </div>
+      </div>
+
+      <!-- Agent trace -->
+      @if (result.agentSteps.length > 0) {
+        <div class="trace-section">
+          <h3>Agent Reasoning Trace</h3>
+          @for (step of result.agentSteps; track step.stepNumber) {
+            <div class="trace-step">
+              <div class="trace-header">
+                <span class="trace-number">Step {{ step.stepNumber }}</span>
+                <span class="trace-tool">{{ step.toolName }}</span>
+              </div>
+              <details>
+                <summary>Show details</summary>
+                <div class="trace-detail">
+                  <div><strong>Input:</strong> <pre>{{ step.input }}</pre></div>
+                  <div><strong>Output:</strong> <pre>{{ step.output }}</pre></div>
+                </div>
+              </details>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
