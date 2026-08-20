@@ -1,0 +1,19 @@
+[
+  {
+    "doc_id": "doc-20260819203927",
+    "doc_type": "pdf_native",
+    "summary": "Promoted from human override: reasons...",
+    "raw_text": "Dear Benefits Office,\n\nPlease find attached the supporting documentation for case reference BEN-2024-4421. All requested documents have been provided as per the checklist.\n\nRegards,\nCommunity Services Agency",
+    "expected_pii_masks": [],
+    "expected_retrieved_policy_ids": [
+      "POL-001",
+      "POL-002",
+      "POL-003",
+      "POL-004"
+    ],
+    "expected_verdict": "flag",
+    "expected_rationale_contains": [],
+    "is_adversarial": false,
+    "injection_payload_summary": null
+  }
+]

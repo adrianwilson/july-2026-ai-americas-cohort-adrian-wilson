@@ -79,44 +79,4 @@
     </div>
   }
 
-  <!-- Eval Runner -->
-  <div class="section eval-section">
-    <div class="eval-header">
-      <h3>Gold Dataset Evaluation</h3>
-      <button class="eval-btn" (click)="runEval()" [disabled]="evalRunning">
-        {{ evalRunning ? 'Running...' : 'Run Eval' }}
-      </button>
-    </div>
-
-    @if (evalRunning) {
-      <div class="status-bar">
-        <span class="spinner"></span>
-        Running gold dataset evaluation (this may take a minute)...
-      </div>
-    }
-
-    @if (evalResult) {
-      <div class="eval-results">
-        <div class="eval-score">
-          <span class="eval-accuracy">{{ evalResult.accuracy }}%</span>
-          <span class="eval-detail">{{ evalResult.correct }}/{{ evalResult.total }} correct</span>
-        </div>
-        <div class="eval-rows">
-          @for (row of evalResult.results; track row.docId) {
-            <div class="eval-row" [class.pass]="row.pass" [class.fail]="!row.pass">
-              <span class="eval-row-id">{{ row.docId }}</span>
-              <span class="eval-row-summary">{{ row.summary }}</span>
-              <span class="eval-row-verdict">
-                {{ row.expected }}
-                @if (!row.pass) {
-                  <span class="eval-row-actual">(got: {{ row.actual }})</span>
-                }
-              </span>
-              <span class="eval-row-status">{{ row.pass ? 'PASS' : 'FAIL' }}</span>
-            </div>
-          }
-        </div>
-      </div>
-    }
-  </div>
 </div>

@@ -1,0 +1,19 @@
+{
+  "runId": "eval-20260820-215202",
+  "timestamp": "2026-08-20T21:52:02.6252270Z",
+  "total": 1,
+  "correct": 0,
+  "accuracy": 0,
+  "results": [
+    {
+      "docId": "doc-20260819203927",
+      "summary": "Promoted from human override: reasons...",
+      "expected": "Flag",
+      "actual": "Allow",
+      "confidence": 0.98,
+      "pass": false,
+      "rationale": "This is a plain administrative cover letter from Community Services Agency referencing case BEN-2024-4421. The PII mask summary confirms 0 items were masked, meaning no personal data is present \u2014 POL-002 does not apply. The document contains no executable code, obfuscated strings, or prompt injection content, so POL-004 does not apply. It is not an income verification document, so POL-003 is not triggered. The file type (PdfNative/PDF) is accepted per POL-001. No policy violations were identified.",
+      "isAdversarial": false
+    }
+  ]
+}
