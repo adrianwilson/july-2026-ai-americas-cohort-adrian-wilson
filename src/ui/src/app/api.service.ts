@@ -142,4 +142,64 @@ export class ApiService {
     return this.http.get<EvalComparison>(
       `${this.baseUrl}/api/eval/compare?run1=${run1}&run2=${run2}`);
   }
+
+  submitReview(request: ReviewRequest): Observable<ReviewResponse> {
+    return this.http.post<ReviewResponse>(`${this.baseUrl}/api/review`, request);
+  }
+
+  getRecentClassifications(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/api/classify/recent`);
+  }
+
+  getClassification(docId: string): Observable<ClassifyResponse> {
+    return this.http.get<ClassifyResponse>(`${this.baseUrl}/api/classify/${encodeURIComponent(docId)}`);
+  }
+
+  getFeedbackSummary(): Observable<FeedbackSummary> {
+    return this.http.get<FeedbackSummary>(`${this.baseUrl}/api/feedback/summary`);
+  }
+
+  promoteToGold(docId: string): Observable<{ promoted: boolean; docId: string }> {
+    return this.http.post<{ promoted: boolean; docId: string }>(
+      `${this.baseUrl}/api/feedback/promote/${encodeURIComponent(docId)}`, {});
+  }
 }
+
+export interface ReviewRequest {
+  docId: string;
+  humanVerdict: string;
+  humanRationale?: string;
+  missedPolicyIds?: string[];
+}
+
+export interface ReviewResponse {
+  recorded: boolean;
+  agreement: boolean;
+  agentVerdict: string;
+  humanVerdict: string;
+  direction: string;
+}
+
+export interface FeedbackSummary {
+  totalReviews: number;
+  agreements: number;
+  overrides: number;
+  agreementRate: number;
+  overridesByDirection: Record<string, number>;
+  missedPolicyCounts: Record<string, number>;
+  recentOverrides: FeedbackOverride[];
+}
+
+export interface FeedbackOverride {
+  docId: string;
+  timestamp: string;
+  agentVerdict: string;
+  agentRationale: string;
+  agentCitations: string[];
+  humanVerdict: string;
+  humanRationale: string | null;
+  missedPolicyIds: string[];
+  promotedToGold: boolean;
+}
+
+export type EvalResult = EvalRun;

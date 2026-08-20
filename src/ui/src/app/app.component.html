@@ -1,10 +1,18 @@
 <div class="app-nav">
   <button [class.active]="activeTab === 'classify'" (click)="activeTab = 'classify'">Classify</button>
+  <button [class.active]="activeTab === 'review'" (click)="activeTab = 'review'">Human Review</button>
+  <button [class.active]="activeTab === 'feedback'" (click)="activeTab = 'feedback'">Feedback</button>
   <button [class.active]="activeTab === 'eval'" (click)="activeTab = 'eval'">Eval History</button>
 </div>
 
 @if (activeTab === 'classify') {
   <app-classify></app-classify>
+}
+@if (activeTab === 'review') {
+  <app-review></app-review>
+}
+@if (activeTab === 'feedback') {
+  <app-feedback></app-feedback>
 }
 @if (activeTab === 'eval') {
   <app-eval-history></app-eval-history>
