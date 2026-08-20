@@ -6,7 +6,8 @@
     "api": "dotnet run --project src/ContentSafetyGate.Api",
     "ui": "cd src/ui && npx ng serve --open --port 4300",
     "build": "dotnet build && cd src/ui && npx ng build",
-    "eval": "dotnet run --project src/ContentSafetyGate.Cli -- eval"
+    "eval": "dotnet run --project src/ContentSafetyGate.Cli -- eval",
+    "reset": "./run.sh reset"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

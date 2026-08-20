@@ -84,6 +84,14 @@ case "${1:-}" in
         dotnet build "$ROOT" --nologo -q
         dotnet run --project "$CLI" --no-build -- classify-text "${@:2}"
         ;;
+    reset)
+        echo "Clearing eval history and feedback data..."
+        rm -rf "$ROOT"/data/eval/history
+        rm -rf "$ROOT"/src/ContentSafetyGate.Api/data/eval/history
+        rm -rf "$ROOT"/src/ContentSafetyGate.Api/bin/Debug/net10.0/data/eval/history
+        rm -f "$ROOT"/src/ContentSafetyGate.Api/data/feedback/override-log.jsonl
+        echo "Done. Gold dataset preserved."
+        ;;
     build)
         dotnet build "$ROOT"
         (cd "$UI" && npx ng build)
