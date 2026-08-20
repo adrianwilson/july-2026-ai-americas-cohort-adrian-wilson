@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiService, ClassifyResponse, MaskResponse } from './api.service';
+import { ApiService, ClassifyResponse, MaskResponse, ReviewResponse } from './api.service';
 
 type PipelineStage = 'idle' | 'masking' | 'masked' | 'retrieving' | 'classifying' | 'complete';
 
@@ -20,6 +20,13 @@ export class ClassifyComponent {
   error = '';
   statusMessage = '';
 
+  // Human review (inline)
+  reviewVerdict = '';
+  reviewRationale = '';
+  reviewMissedPolicies = '';
+  reviewSubmitted = false;
+  reviewResponse: ReviewResponse | null = null;
+
   sampleDocs = [
     { label: 'Clean cover letter (Allow)', text: 'Dear Benefits Office,\n\nPlease find attached the supporting documentation for case reference BEN-2024-4421. All requested documents have been provided as per the checklist.\n\nRegards,\nCommunity Services Agency' },
     { label: 'Application with PII (Flag)', text: 'APPLICATION FOR BENEFITS\nFull Name: Maria Santos\nDate of Birth: 1985-03-14\nAddress: 123 Main Street, Edmonton, AB T5K 0A1\nSIN: Not provided\nSignature: [signed]' },
@@ -35,6 +42,7 @@ export class ClassifyComponent {
     this.maskPreview = null;
     this.error = '';
     this.stage = 'idle';
+    this.resetReview();
   }
 
   classify(): void {
@@ -44,6 +52,7 @@ export class ClassifyComponent {
     this.maskPreview = null;
     this.error = '';
     this.stage = 'idle';
+    this.resetReview();
 
     const stream = this.api.classifyStream(this.documentText);
 
@@ -78,8 +87,9 @@ export class ClassifyComponent {
             break;
           case 'complete':
             this.stage = 'complete';
-            this.statusMessage = 'Classification complete';
+            this.statusMessage = 'Classification complete — awaiting your review';
             this.result = event.data;
+            this.reviewVerdict = event.data.verdict.toLowerCase();
             break;
           case 'done':
             break;
@@ -90,6 +100,48 @@ export class ClassifyComponent {
         this.stage = 'idle';
       }
     });
+  }
+
+  // Review methods
+  selectReviewVerdict(verdict: string): void {
+    this.reviewVerdict = verdict;
+  }
+
+  isOverride(): boolean {
+    return !!this.result && !!this.reviewVerdict &&
+      this.reviewVerdict.toLowerCase() !== this.result.verdict.toLowerCase();
+  }
+
+  submitReview(): void {
+    if (!this.result || !this.reviewVerdict) return;
+
+    const missedPolicies = this.reviewMissedPolicies
+      .split(',')
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+
+    this.api.submitReview({
+      docId: this.result.docId,
+      humanVerdict: this.reviewVerdict,
+      humanRationale: this.reviewRationale || undefined,
+      missedPolicyIds: missedPolicies.length > 0 ? missedPolicies : undefined
+    }).subscribe({
+      next: (response) => {
+        this.reviewResponse = response;
+        this.reviewSubmitted = true;
+      },
+      error: (err: any) => {
+        this.error = err.error || 'Failed to submit review';
+      }
+    });
+  }
+
+  resetReview(): void {
+    this.reviewVerdict = '';
+    this.reviewRationale = '';
+    this.reviewMissedPolicies = '';
+    this.reviewSubmitted = false;
+    this.reviewResponse = null;
   }
 
   isStageActive(stage: PipelineStage): boolean {

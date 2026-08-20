@@ -102,10 +102,55 @@
             <strong>Policy citations:</strong> {{ result.policyCitations.join(', ') }}
           </div>
         }
-        <div class="doc-id-hint">
-          Document ID: <code>{{ result.docId }}</code> — use this in the Review tab
-        </div>
       </div>
+
+      <!-- Human Review (inline) -->
+      @if (!reviewSubmitted) {
+        <div class="review-panel">
+          <h3>Your Decision</h3>
+          <div class="review-verdicts">
+            <button class="review-verdict-btn allow"
+                    [class.selected]="reviewVerdict === 'allow'"
+                    (click)="selectReviewVerdict('allow')">Allow</button>
+            <button class="review-verdict-btn flag"
+                    [class.selected]="reviewVerdict === 'flag'"
+                    (click)="selectReviewVerdict('flag')">Flag</button>
+            <button class="review-verdict-btn block"
+                    [class.selected]="reviewVerdict === 'block'"
+                    (click)="selectReviewVerdict('block')">Block</button>
+          </div>
+
+          @if (isOverride()) {
+            <div class="override-fields">
+              <label>
+                Rationale (required when overriding):
+                <textarea [(ngModel)]="reviewRationale" rows="3"
+                          placeholder="Why does the agent's verdict need to change?"></textarea>
+              </label>
+              <label>
+                Missed policies (optional, comma-separated):
+                <input type="text" [(ngModel)]="reviewMissedPolicies"
+                       placeholder="e.g. POL-003, POL-005" />
+              </label>
+            </div>
+          }
+
+          <button class="submit-review-btn"
+                  [disabled]="!reviewVerdict || (isOverride() && !reviewRationale.trim())"
+                  (click)="submitReview()">
+            {{ isOverride() ? 'Submit Override' : 'Confirm Agreement' }}
+          </button>
+        </div>
+      } @else {
+        <div class="review-confirmation" [class.override]="reviewResponse && !reviewResponse.agreement">
+          @if (reviewResponse?.agreement) {
+            <span class="review-icon">&#10003;</span> You agreed with the agent's verdict.
+          } @else {
+            <span class="review-icon">&#9998;</span>
+            Override recorded: {{ reviewResponse?.direction }}
+          }
+        </div>
+      }
 
       <!-- Agent trace -->
       @if (result.agentSteps.length > 0) {
