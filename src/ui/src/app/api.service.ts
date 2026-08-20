@@ -33,6 +33,48 @@ export interface StreamEvent {
   data?: any;
 }
 
+export interface EvalRun {
+  runId: string;
+  timestamp: string;
+  total: number;
+  correct: number;
+  accuracy: number;
+  results: EvalDocResult[];
+}
+
+export interface EvalDocResult {
+  docId: string;
+  summary: string;
+  expected: string;
+  actual: string;
+  confidence: number;
+  pass: boolean;
+  rationale: string;
+  isAdversarial: boolean;
+}
+
+export interface EvalComparison {
+  run1: { runId: string; timestamp: string; accuracy: number; total: number; correct: number };
+  run2: { runId: string; timestamp: string; accuracy: number; total: number; correct: number };
+  improved: number;
+  regressed: number;
+  unchanged: number;
+  docs: EvalComparisonDoc[];
+}
+
+export interface EvalComparisonDoc {
+  docId: string;
+  summary: string;
+  expected: string;
+  run1Actual: string;
+  run1Pass: boolean;
+  run2Actual: string;
+  run2Pass: boolean;
+  flipped: boolean;
+  improved: boolean;
+  regressed: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private baseUrl = 'http://localhost:5000';
@@ -80,12 +122,24 @@ export class ApiService {
 
   classify(text: string, docId?: string): Observable<ClassifyResponse> {
     return this.http.post<ClassifyResponse>(`${this.baseUrl}/api/classify`, {
-      text,
-      docId: docId || undefined
+      text, docId: docId || undefined
     });
   }
 
   mask(text: string): Observable<MaskResponse> {
     return this.http.post<MaskResponse>(`${this.baseUrl}/api/mask`, { text });
+  }
+
+  runEval(): Observable<EvalRun> {
+    return this.http.get<EvalRun>(`${this.baseUrl}/api/eval`);
+  }
+
+  getEvalHistory(): Observable<EvalRun[]> {
+    return this.http.get<EvalRun[]>(`${this.baseUrl}/api/eval/history`);
+  }
+
+  compareEvals(run1: string, run2: string): Observable<EvalComparison> {
+    return this.http.get<EvalComparison>(
+      `${this.baseUrl}/api/eval/compare?run1=${run1}&run2=${run2}`);
   }
 }

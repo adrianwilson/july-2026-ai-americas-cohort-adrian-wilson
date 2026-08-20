@@ -1,0 +1,151 @@
+.container { max-width: 960px; margin: 0 auto; padding: 40px 20px; }
+h2 { font-size: 24px; margin-bottom: 4px; }
+.subtitle { color: #64748b; margin-bottom: 24px; }
+
+.error {
+  padding: 12px 16px; background: #fef2f2;
+  border: 1px solid #fecaca; border-radius: 8px;
+  color: #dc2626; margin-bottom: 16px;
+}
+
+.empty-state {
+  padding: 40px; text-align: center; color: #94a3b8;
+  font-size: 14px; background: #f8fafc; border-radius: 12px;
+  border: 1px dashed #e2e8f0;
+}
+
+// Stats
+.stats-row {
+  display: flex; gap: 24px; margin-bottom: 24px;
+  padding: 20px; background: #f8fafc; border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.stat {
+  display: flex; flex-direction: column; align-items: center;
+  .stat-value { font-size: 32px; font-weight: 800; color: #1e293b; }
+  .stat-label { font-size: 12px; color: #64748b; font-weight: 500; text-transform: uppercase; }
+}
+
+// Sections
+.section {
+  margin-bottom: 24px;
+  h3 { font-size: 16px; margin-bottom: 12px; }
+}
+
+// Override breakdown
+.override-breakdown { margin-bottom: 12px; }
+
+.breakdown-row {
+  display: flex; justify-content: space-between;
+  padding: 8px 12px; font-size: 13px; color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.breakdown-count { font-weight: 700; }
+
+.missed-policies { font-size: 13px; color: #475569; margin-top: 8px; }
+
+.missed-tag {
+  display: inline-block; margin: 4px 4px 0 0;
+  padding: 2px 8px; background: #fef3c7;
+  border-radius: 4px; font-size: 12px; color: #92400e;
+}
+
+// Override cards
+.override-card {
+  padding: 12px 16px; margin-bottom: 8px;
+  background: white; border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.override-header {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+
+.override-doc { font-weight: 700; font-size: 13px; font-family: monospace; }
+
+.override-direction {
+  font-size: 13px; padding: 2px 8px;
+  background: #fef3c7; color: #92400e;
+  border-radius: 4px;
+}
+
+.override-rationale { font-size: 12px; color: #64748b; margin: 6px 0 0; }
+.override-missed { font-size: 12px; color: #dc2626; margin-top: 4px; }
+
+.promote-btn {
+  margin-left: auto; padding: 6px 14px;
+  background: #3b82f6; color: white; border: none;
+  border-radius: 6px; font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  &:hover { background: #2563eb; }
+}
+
+.promoted-badge {
+  margin-left: auto; padding: 4px 12px;
+  background: #dcfce7; color: #166534;
+  border-radius: 6px; font-size: 12px; font-weight: 600;
+}
+
+// Eval
+.eval-section { padding-top: 16px; border-top: 1px solid #e2e8f0; }
+
+.eval-header {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 12px;
+  h3 { margin: 0; }
+}
+
+.eval-btn {
+  padding: 8px 20px; background: #1e293b; color: white;
+  border: none; border-radius: 6px; font-size: 13px;
+  font-weight: 600; cursor: pointer;
+  &:hover:not(:disabled) { background: #334155; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.status-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; margin-bottom: 12px;
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  border-radius: 8px; font-size: 13px; color: #1e40af; font-weight: 500;
+}
+
+.spinner {
+  width: 16px; height: 16px; border: 2px solid #bfdbfe;
+  border-top-color: #3b82f6; border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.eval-results { margin-top: 12px; }
+
+.eval-score {
+  display: flex; align-items: baseline; gap: 12px;
+  margin-bottom: 16px;
+}
+
+.eval-accuracy { font-size: 36px; font-weight: 800; color: #1e293b; }
+.eval-detail { font-size: 14px; color: #64748b; }
+
+.eval-rows { font-size: 12px; }
+
+.eval-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 12px; border-radius: 6px; margin-bottom: 4px;
+  &.pass { background: #f0fdf4; }
+  &.fail { background: #fef2f2; }
+}
+
+.eval-row-id { font-weight: 700; font-family: monospace; min-width: 70px; }
+.eval-row-summary { flex: 1; color: #475569; }
+.eval-row-verdict { min-width: 80px; font-weight: 600; }
+.eval-row-actual { color: #dc2626; font-weight: 400; }
+
+.eval-row-status {
+  font-weight: 800; min-width: 40px; text-align: right;
+  .pass & { color: #16a34a; }
+  .fail & { color: #dc2626; }
+}

@@ -1,0 +1,125 @@
+<div class="eval-container">
+  <div class="eval-header">
+    <h2>Eval History</h2>
+    <button class="run-btn" (click)="runEval()" [disabled]="running">
+      {{ running ? 'Running eval...' : 'Run Eval' }}
+    </button>
+  </div>
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  <!-- Run list -->
+  @if (runs.length > 0) {
+    <div class="runs-list">
+      @for (run of runs; track run.runId; let i = $index) {
+        <div class="run-card" [class.selected]="selectedRun?.runId === run.runId" (click)="selectRun(run)">
+          <div class="run-score" [class.high]="run.accuracy >= 80" [class.mid]="run.accuracy >= 60 && run.accuracy < 80" [class.low]="run.accuracy < 60">
+            {{ run.accuracy }}%
+          </div>
+          <div class="run-info">
+            <div class="run-id">{{ run.runId }}</div>
+            <div class="run-meta">{{ run.correct }}/{{ run.total }} correct</div>
+          </div>
+          @if (i < runs.length - 1) {
+            <button class="compare-btn" (click)="compareWithPrevious(run); $event.stopPropagation()">
+              Compare
+            </button>
+          }
+        </div>
+      }
+    </div>
+  } @else if (!running) {
+    <p class="empty">No eval runs yet. Click "Run Eval" to start.</p>
+  }
+
+  <!-- Selected run detail -->
+  @if (selectedRun) {
+    <div class="run-detail">
+      <h3>{{ selectedRun.runId }} — {{ selectedRun.accuracy }}%</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Doc</th>
+            <th>Summary</th>
+            <th>Expected</th>
+            <th>Actual</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (doc of selectedRun.results; track doc.docId) {
+            <tr [class.pass]="doc.pass" [class.fail]="!doc.pass">
+              <td>{{ doc.docId }}</td>
+              <td>{{ doc.summary }}</td>
+              <td>{{ doc.expected }}</td>
+              <td>{{ doc.actual }}</td>
+              <td>
+                <span class="badge" [class.pass]="doc.pass" [class.fail]="!doc.pass">
+                  {{ doc.pass ? 'PASS' : 'FAIL' }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Comparison view -->
+  @if (comparison) {
+    <div class="comparison">
+      <div class="comparison-header">
+        <div class="comp-run">
+          <div class="comp-label">Before</div>
+          <div class="comp-score" [class.high]="comparison.run1.accuracy >= 80">{{ comparison.run1.accuracy }}%</div>
+          <div class="comp-meta">{{ comparison.run1.correct }}/{{ comparison.run1.total }}</div>
+        </div>
+        <div class="comp-arrow">&rarr;</div>
+        <div class="comp-run">
+          <div class="comp-label">After</div>
+          <div class="comp-score" [class.high]="comparison.run2.accuracy >= 80">{{ comparison.run2.accuracy }}%</div>
+          <div class="comp-meta">{{ comparison.run2.correct }}/{{ comparison.run2.total }}</div>
+        </div>
+      </div>
+
+      <div class="comp-summary">
+        <span class="improved">{{ comparison.improved }} improved</span>
+        <span class="regressed">{{ comparison.regressed }} regressed</span>
+        <span class="unchanged">{{ comparison.unchanged }} unchanged</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Doc</th>
+            <th>Expected</th>
+            <th>Before</th>
+            <th>After</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (doc of comparison.docs; track doc.docId) {
+            <tr [class.improved]="doc.improved" [class.regressed]="doc.regressed">
+              <td>{{ doc.docId }}</td>
+              <td>{{ doc.expected }}</td>
+              <td>
+                <span class="badge" [class.pass]="doc.run1Pass" [class.fail]="!doc.run1Pass">{{ doc.run1Actual }}</span>
+              </td>
+              <td>
+                <span class="badge" [class.pass]="doc.run2Pass" [class.fail]="!doc.run2Pass">{{ doc.run2Actual }}</span>
+              </td>
+              <td>
+                @if (doc.improved) { <span class="change-improved">Fixed</span> }
+                @else if (doc.regressed) { <span class="change-regressed">Regressed</span> }
+                @else { <span class="change-same">—</span> }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

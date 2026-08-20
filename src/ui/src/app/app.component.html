@@ -1,1 +1,11 @@
-<app-classify></app-classify>
+<div class="app-nav">
+  <button [class.active]="activeTab === 'classify'" (click)="activeTab = 'classify'">Classify</button>
+  <button [class.active]="activeTab === 'eval'" (click)="activeTab = 'eval'">Eval History</button>
+</div>
+
+@if (activeTab === 'classify') {
+  <app-classify></app-classify>
+}
+@if (activeTab === 'eval') {
+  <app-eval-history></app-eval-history>
+}

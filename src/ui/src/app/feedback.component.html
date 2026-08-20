@@ -1,0 +1,122 @@
+<div class="container">
+  <h2>Feedback &amp; Eval</h2>
+  <p class="subtitle">Review override patterns, expand the gold dataset, and run evaluations</p>
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  <!-- Summary Stats -->
+  @if (feedbackSummary && feedbackSummary.totalReviews > 0) {
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-value">{{ feedbackSummary.totalReviews }}</span>
+        <span class="stat-label">Reviews</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ feedbackSummary.agreementRate }}%</span>
+        <span class="stat-label">Agreement</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ feedbackSummary.overrides }}</span>
+        <span class="stat-label">Overrides</span>
+      </div>
+    </div>
+
+    <!-- Override Breakdown -->
+    @if (feedbackSummary.overrides > 0) {
+      <div class="section">
+        <h3>Override Patterns</h3>
+        <div class="override-breakdown">
+          @for (entry of feedbackSummary.overridesByDirection | keyvalue; track entry.key) {
+            <div class="breakdown-row">
+              <span>{{ entry.key }}</span>
+              <span class="breakdown-count">{{ entry.value }}</span>
+            </div>
+          }
+        </div>
+        @if (Object.keys(feedbackSummary.missedPolicyCounts).length > 0) {
+          <div class="missed-policies">
+            <strong>Frequently missed policies:</strong>
+            @for (entry of feedbackSummary.missedPolicyCounts | keyvalue; track entry.key) {
+              <span class="missed-tag">{{ entry.key }} ({{ entry.value }}x)</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Overrides List with Promote -->
+      <div class="section">
+        <h3>Recent Overrides</h3>
+        @for (override of feedbackSummary.recentOverrides; track override.docId) {
+          <div class="override-card">
+            <div class="override-header">
+              <span class="override-doc">{{ override.docId }}</span>
+              <span class="override-direction">{{ override.agentVerdict }} &rarr; {{ override.humanVerdict }}</span>
+              @if (override.promotedToGold) {
+                <span class="promoted-badge">In gold dataset</span>
+              } @else {
+                <button class="promote-btn" (click)="promoteOverride(override.docId)">
+                  Promote to gold dataset
+                </button>
+              }
+            </div>
+            @if (override.humanRationale) {
+              <p class="override-rationale">{{ override.humanRationale }}</p>
+            }
+            @if (override.missedPolicyIds.length > 0) {
+              <div class="override-missed">
+                Missed: {{ override.missedPolicyIds.join(', ') }}
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  } @else {
+    <div class="empty-state">
+      No human reviews yet. Classify documents and submit reviews to see feedback here.
+    </div>
+  }
+
+  <!-- Eval Runner -->
+  <div class="section eval-section">
+    <div class="eval-header">
+      <h3>Gold Dataset Evaluation</h3>
+      <button class="eval-btn" (click)="runEval()" [disabled]="evalRunning">
+        {{ evalRunning ? 'Running...' : 'Run Eval' }}
+      </button>
+    </div>
+
+    @if (evalRunning) {
+      <div class="status-bar">
+        <span class="spinner"></span>
+        Running gold dataset evaluation (this may take a minute)...
+      </div>
+    }
+
+    @if (evalResult) {
+      <div class="eval-results">
+        <div class="eval-score">
+          <span class="eval-accuracy">{{ evalResult.accuracy }}%</span>
+          <span class="eval-detail">{{ evalResult.correct }}/{{ evalResult.total }} correct</span>
+        </div>
+        <div class="eval-rows">
+          @for (row of evalResult.results; track row.docId) {
+            <div class="eval-row" [class.pass]="row.pass" [class.fail]="!row.pass">
+              <span class="eval-row-id">{{ row.docId }}</span>
+              <span class="eval-row-summary">{{ row.summary }}</span>
+              <span class="eval-row-verdict">
+                {{ row.expected }}
+                @if (!row.pass) {
+                  <span class="eval-row-actual">(got: {{ row.actual }})</span>
+                }
+              </span>
+              <span class="eval-row-status">{{ row.pass ? 'PASS' : 'FAIL' }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

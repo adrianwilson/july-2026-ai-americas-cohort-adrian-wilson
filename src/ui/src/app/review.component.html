@@ -1,0 +1,124 @@
+<div class="container">
+  <h2>Human Review</h2>
+  <p class="subtitle">Review AI classifications and submit your decision</p>
+
+  <!-- Review Queue -->
+  @if (!result) {
+    <div class="review-queue">
+      <h3>Documents Pending Review</h3>
+      @if (recentDocs.length > 0) {
+        @for (docId of recentDocs; track docId) {
+          <button class="queue-item" (click)="loadDocument(docId)" [disabled]="loading">
+            <span class="queue-doc-id">{{ docId }}</span>
+            <span class="queue-action">Review &rarr;</span>
+          </button>
+        }
+      } @else {
+        <div class="empty-state">
+          No documents pending review. Classify documents in the Classify tab first.
+        </div>
+      }
+    </div>
+  }
+
+  @if (loading) {
+    <div class="status-bar">
+      <span class="spinner"></span> Loading classification...
+    </div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (result) {
+    <!-- Back button -->
+    <button class="back-btn" (click)="result = null; resetReview(); loadRecentDocs()">
+      &larr; Back to queue
+    </button>
+
+    <!-- Document info -->
+    <div class="doc-info">
+      <span class="doc-info-id">{{ result.docId }}</span>
+      @if (result.piiDetected.length > 0) {
+        <span class="doc-info-pii">{{ result.piiDetected.join(', ') }} ({{ result.piiCount }} items)</span>
+      } @else {
+        <span class="doc-info-clean">No PII detected</span>
+      }
+    </div>
+
+    <!-- Original document text -->
+    @if (result.originalText) {
+      <div class="doc-text-card">
+        <h3>Document Text</h3>
+        <pre>{{ result.originalText }}</pre>
+      </div>
+    }
+
+    <!-- AI Assessment -->
+    <div class="verdict-card" [ngClass]="getVerdictClass()">
+      <div class="verdict-header">
+        <div>
+          <div class="verdict-source">AI Assessment</div>
+          <span class="verdict-label">{{ result.verdict }}</span>
+        </div>
+        <span class="verdict-confidence">{{ (result.confidence * 100).toFixed(0) }}% confidence</span>
+      </div>
+      <p class="verdict-rationale">{{ result.rationale }}</p>
+      @if (result.policyCitations.length > 0) {
+        <div class="citations">
+          <strong>Policy citations:</strong> {{ result.policyCitations.join(', ') }}
+        </div>
+      }
+    </div>
+
+    <!-- Review Panel -->
+    @if (!reviewSubmitted) {
+      <div class="review-panel">
+        <h3>Your Decision</h3>
+
+        <div class="review-verdicts">
+          <button class="review-verdict-btn allow"
+                  [class.selected]="reviewVerdict === 'allow'"
+                  (click)="selectReviewVerdict('allow')">Allow</button>
+          <button class="review-verdict-btn flag"
+                  [class.selected]="reviewVerdict === 'flag'"
+                  (click)="selectReviewVerdict('flag')">Flag</button>
+          <button class="review-verdict-btn block"
+                  [class.selected]="reviewVerdict === 'block'"
+                  (click)="selectReviewVerdict('block')">Block</button>
+        </div>
+
+        @if (isOverride()) {
+          <div class="override-fields">
+            <label>
+              Rationale (required when overriding):
+              <textarea [(ngModel)]="reviewRationale" rows="3"
+                        placeholder="Why does the agent's verdict need to change?"></textarea>
+            </label>
+            <label>
+              Missed policies (optional, comma-separated):
+              <input type="text" [(ngModel)]="reviewMissedPolicies"
+                     placeholder="e.g. POL-003, POL-017" />
+            </label>
+          </div>
+        }
+
+        <button class="submit-review-btn"
+                [disabled]="!reviewVerdict || (isOverride() && !reviewRationale.trim())"
+                (click)="submitReview()">
+          {{ isOverride() ? 'Submit Override' : 'Confirm Agreement' }}
+        </button>
+      </div>
+    } @else {
+      <div class="review-confirmation" [class.override]="reviewResponse && !reviewResponse.agreement">
+        @if (reviewResponse?.agreement) {
+          <span class="review-icon">&#10003;</span> You agreed with the agent's verdict.
+        } @else {
+          <span class="review-icon">&#9998;</span>
+          Override recorded: {{ reviewResponse?.direction }}
+        }
+      </div>
+    }
+  }
+</div>

@@ -1,6 +1,6 @@
 <div class="container">
-  <h1>Content Safety Gate</h1>
-  <p class="subtitle">AI-assisted document classification for benefits administration</p>
+  <h2>Classify</h2>
+  <p class="subtitle">Upload and classify documents through the AI safety pipeline</p>
 
   <!-- Pipeline visualization -->
   <div class="pipeline">
@@ -67,7 +67,7 @@
     <div class="error">{{ error }}</div>
   }
 
-  <!-- PII Masking preview (shows as soon as masking is done) -->
+  <!-- PII Masking preview -->
   @if (maskPreview) {
     <div class="two-path">
       <div class="path-card">
@@ -88,10 +88,9 @@
     </div>
   }
 
-  <!-- Final Results -->
+  <!-- Results -->
   @if (result) {
     <div class="results">
-      <!-- Verdict -->
       <div class="verdict-card" [ngClass]="getVerdictClass()">
         <div class="verdict-header">
           <span class="verdict-label">{{ result.verdict }}</span>
@@ -103,6 +102,9 @@
             <strong>Policy citations:</strong> {{ result.policyCitations.join(', ') }}
           </div>
         }
+        <div class="doc-id-hint">
+          Document ID: <code>{{ result.docId }}</code> — use this in the Review tab
+        </div>
       </div>
 
       <!-- Agent trace -->
