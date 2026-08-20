@@ -1,0 +1,29 @@
+{
+  "runId": "eval-20260820-231630",
+  "timestamp": "2026-08-20T23:16:30.0586580Z",
+  "total": 2,
+  "correct": 0,
+  "accuracy": 0,
+  "results": [
+    {
+      "docId": "doc-20260819203927",
+      "summary": "Promoted from human override: reasons...",
+      "expected": "Flag",
+      "actual": "Allow",
+      "confidence": 0.98,
+      "pass": false,
+      "rationale": "This is a plain administrative cover letter submitted as a PDF (compliant with POL-001). The PII mask summary confirms 0 items were masked, meaning no personal identifiers (SIN, DOB, bank account, address) are present, so POL-002 flagging requirements are not triggered. The document is not an income verification form, so POL-003 completeness rules do not apply. The text contains no executable code, encoded payloads, or prompt injection attempts, so POL-004 is not triggered. The document is safe to allow.",
+      "isAdversarial": false
+    },
+    {
+      "docId": "doc-20260820231444",
+      "summary": "Promoted from human override: Misidentified DOB\nMisidentified bank statement",
+      "expected": "Allow",
+      "actual": "Flag",
+      "confidence": 0.95,
+      "pass": false,
+      "rationale": "The document contains 1 masked BANK_ACCT token used as the Case Reference identifier. Per POL-002, documents containing bank account numbers must be flagged for human review. No prohibited content, injection attempts, or encoded payloads were detected (POL-004 not triggered). The document also self-reports incomplete submissions (3 of 4 documents received), which may warrant caseworker follow-up per POL-003.",
+      "isAdversarial": false
+    }
+  ]
+}

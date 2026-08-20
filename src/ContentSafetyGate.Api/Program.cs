@@ -435,7 +435,7 @@ static IEnumerable<PolicyChunk> LoadPolicies()
     yield return new PolicyChunk { ChunkId = "POL-005", Source = "Identity Verification", Content = "Government-issued photo ID scans are accepted for identity verification. The document must show the applicant's full legal name and photo. Expired IDs should be flagged for caseworker review." };
 
     // DEMO: Uncomment to show feedback loop — fixes false positives on admin documents
-    // yield return new PolicyChunk { ChunkId = "POL-006", Source = "Administrative Documents", Content = "Internal memos, checklists, processing notes, and administrative correspondence that contain only dates, case reference numbers, or document counts are not PII. These should be classified as allow unless they also contain personal information such as names, addresses, or SINs." };
+    yield return new PolicyChunk { ChunkId = "POL-006", Source = "Administrative Documents", Content = "Internal memos, checklists, processing notes, and administrative correspondence that contain only dates, case reference numbers, or document counts are not PII. These should be classified as allow unless they also contain personal information such as names, addresses, or SINs." };
 }
 
 record ReviewRequest
