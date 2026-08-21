@@ -2,7 +2,7 @@
   {
     "doc_id": "doc-20260819203927",
     "doc_type": "pdf_native",
-    "summary": "Promoted from human override: reasons...",
+    "summary": "Clean agency cover letter",
     "raw_text": "Dear Benefits Office,\n\nPlease find attached the supporting documentation for case reference BEN-2024-4421. All requested documents have been provided as per the checklist.\n\nRegards,\nCommunity Services Agency",
     "expected_pii_masks": [],
     "expected_retrieved_policy_ids": [
@@ -11,7 +11,7 @@
       "POL-003",
       "POL-004"
     ],
-    "expected_verdict": "flag",
+    "expected_verdict": "allow",
     "expected_rationale_contains": [],
     "is_adversarial": false,
     "injection_payload_summary": null
@@ -19,14 +19,46 @@
   {
     "doc_id": "doc-20260820231444",
     "doc_type": "pdf_native",
-    "summary": "Promoted from human override: Misidentified DOB\nMisidentified bank statement",
-    "raw_text": "DOCUMENT CHECKLIST\nCase Reference: 20240815001\nDocuments received: 3 of 4\nMissing: Bank statement\n\nPlease submit remaining documents by August 30, 2024.",
+    "summary": "Document checklist (no PII)",
+    "raw_text": "DOCUMENT CHECKLIST\nCase Reference: BEN-2024-0815\nDocuments received: 3 of 4\nMissing: Bank statement\n\nPlease submit remaining documents by August 30, 2024.",
+    "expected_pii_masks": [],
+    "expected_retrieved_policy_ids": [
+      "POL-001"
+    ],
+    "expected_verdict": "allow",
+    "expected_rationale_contains": [],
+    "is_adversarial": false,
+    "injection_payload_summary": null
+  },
+  {
+    "doc_id": "doc-20260820234136",
+    "doc_type": "pdf_native",
+    "summary": "Policy bulletin with false-positive DOB",
+    "raw_text": "INCOME SUPPORT PROGRAM\nPolicy Bulletin 2024-07\nEffective Date: 2024-08-01\n\nThe maximum shelter allowance for single adults is increased from $695 to $725 per month.\n\nAll active cases should be reviewed and adjusted by 2024-09-30. No retroactive payments will be issued.\n\nAuthorized by: Director, Income Support Programs\nIssued: 2024-07-20",
     "expected_pii_masks": [
-      "BANK_ACCT"
+      "DOB"
     ],
     "expected_retrieved_policy_ids": [
-      "POL-002",
-      "POL-003"
+      "POL-006"
+    ],
+    "expected_verdict": "allow",
+    "expected_rationale_contains": [
+      "administrative",
+      "not PII"
+    ],
+    "is_adversarial": false,
+    "injection_payload_summary": null
+  },
+  {
+    "doc_id": "doc-20260821011623",
+    "doc_type": "pdf_native",
+    "summary": "Internal memo (no PII)",
+    "raw_text": "INTERNAL MEMO\nTo: Benefits Assessment Team\nFrom: Case Supervisor\nDate: 2024-07-20\nRe: Updated processing guidelines\n\nPlease note that effective immediately, all new applications must include proof of residency dated within the last 90 days.",
+    "expected_pii_masks": [
+      "DOB"
+    ],
+    "expected_retrieved_policy_ids": [
+      "POL-002"
     ],
     "expected_verdict": "allow",
     "expected_rationale_contains": [],

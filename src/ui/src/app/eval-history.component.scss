@@ -1,7 +1,7 @@
 .eval-container { max-width: 960px; margin: 0 auto; padding: 20px; }
 
 .eval-header {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px;
   h2 { margin: 0; font-size: 22px; }
 }
 
@@ -9,6 +9,13 @@
   padding: 10px 24px; background: #1e293b; color: white; border: none;
   border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
   &:hover:not(:disabled) { background: #334155; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.clear-btn {
+  padding: 10px 24px; background: transparent; color: #64748b; border: 1px solid #e2e8f0;
+  border-radius: 8px; font-size: 14px; cursor: pointer;
+  &:hover:not(:disabled) { border-color: #dc2626; color: #dc2626; }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 

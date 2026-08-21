@@ -51,6 +51,17 @@ export class EvalHistoryComponent implements OnInit {
     this.comparison = null;
   }
 
+  clearHistory(): void {
+    this.api.clearEvalHistory().subscribe({
+      next: () => {
+        this.runs = [];
+        this.selectedRun = null;
+        this.comparison = null;
+      },
+      error: () => {}
+    });
+  }
+
   compareWithPrevious(run: EvalRun): void {
     const idx = this.runs.indexOf(run);
     if (idx < 0 || idx >= this.runs.length - 1) return;

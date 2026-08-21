@@ -138,6 +138,10 @@ export class ApiService {
     return this.http.get<EvalRun[]>(`${this.baseUrl}/api/eval/history`);
   }
 
+  clearEvalHistory(): Observable<{ deleted: number }> {
+    return this.http.delete<{ deleted: number }>(`${this.baseUrl}/api/eval/history`);
+  }
+
   compareEvals(run1: string, run2: string): Observable<EvalComparison> {
     return this.http.get<EvalComparison>(
       `${this.baseUrl}/api/eval/compare?run1=${run1}&run2=${run2}`);
@@ -162,6 +166,15 @@ export class ApiService {
   promoteToGold(docId: string): Observable<{ promoted: boolean; docId: string }> {
     return this.http.post<{ promoted: boolean; docId: string }>(
       `${this.baseUrl}/api/feedback/promote/${encodeURIComponent(docId)}`, {});
+  }
+
+  getPolicies(): Observable<PolicyEntry[]> {
+    return this.http.get<PolicyEntry[]>(`${this.baseUrl}/api/policies`);
+  }
+
+  togglePolicy(chunkId: string): Observable<{ chunkId: string; enabled: boolean }> {
+    return this.http.post<{ chunkId: string; enabled: boolean }>(
+      `${this.baseUrl}/api/policies/${encodeURIComponent(chunkId)}/toggle`, {});
   }
 }
 
@@ -200,6 +213,13 @@ export interface FeedbackOverride {
   humanRationale: string | null;
   missedPolicyIds: string[];
   promotedToGold: boolean;
+}
+
+export interface PolicyEntry {
+  chunkId: string;
+  source: string;
+  content: string;
+  enabled: boolean;
 }
 
 export type EvalResult = EvalRun;

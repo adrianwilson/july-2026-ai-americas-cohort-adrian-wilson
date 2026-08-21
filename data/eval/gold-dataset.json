@@ -122,12 +122,12 @@
   {
     "doc_id": "DOC-011",
     "doc_type": "pdf_native",
-    "summary": "Government policy document with no personal data",
-    "raw_text": "ALBERTA INCOME SUPPORT PROGRAM\nPolicy Bulletin 2024-07\n\nEffective August 1, 2024, the maximum shelter allowance for single adults in the Edmonton zone is increased from $695 to $725 per month.\n\nAll active cases should be reviewed and adjusted at next renewal. No retroactive payments will be issued.\n\nAuthorized by: Director, Income Support Programs",
-    "expected_pii_masks": [],
-    "expected_retrieved_policy_ids": ["POL-001"],
+    "summary": "Government policy bulletin — deadline date falsely masked as DOB (POL-006 corrects)",
+    "raw_text": "ALBERTA INCOME SUPPORT PROGRAM\nPolicy Bulletin 2024-07\n\nEffective August 1, 2024, the maximum shelter allowance for single adults in the Edmonton zone is increased from $695 to $725 per month.\n\nAll active cases should be reviewed and adjusted by 2024-09-30. No retroactive payments will be issued.\n\nAuthorized by: Director, Income Support Programs",
+    "expected_pii_masks": ["DOB"],
+    "expected_retrieved_policy_ids": ["POL-006"],
     "expected_verdict": "allow",
-    "expected_rationale_contains": ["no PII", "policy"],
+    "expected_rationale_contains": ["administrative", "not PII"],
     "is_adversarial": false,
     "injection_payload_summary": null
   },

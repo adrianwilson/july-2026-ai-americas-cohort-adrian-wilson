@@ -57,8 +57,8 @@ public partial class PiiMasker : IPiiMasker
     [GeneratedRegex(@"\b\d{3}[-\s]?\d{3}[-\s]?\d{3}\b")]
     private static partial Regex SinPattern();
 
-    // Dates that look like DOB
-    [GeneratedRegex(@"\b\d{4}[-/]\d{2}[-/]\d{2}\b|\b\d{2}[-/]\d{2}[-/]\d{4}\b")]
+    // Dates that look like DOB — skip dates preceded by contextual keywords (Date:, Effective:, Issued:, etc.)
+    [GeneratedRegex(@"(?<!(?:Date|Effective|Issued|Updated|Created|Sent|Received|Filed)\s*:\s*)\b(\d{4}[-/]\d{2}[-/]\d{2}|\d{2}[-/]\d{2}[-/]\d{4})\b")]
     private static partial Regex DobPattern();
 
     // Bank account numbers (7-12 digits)

@@ -6,6 +6,34 @@
     <div class="error">{{ error }}</div>
   }
 
+  <!-- Policy Editor -->
+  @if (policies.length > 0) {
+    <div class="section policy-section">
+      <h3>Policies</h3>
+      <p class="section-desc">Toggle policies on/off — changes take effect on the next classification.</p>
+      <div class="policy-list">
+        @for (policy of policies; track policy.chunkId) {
+          <div class="policy-card" [class.disabled]="!policy.enabled">
+            <div class="policy-toggle">
+              <button class="toggle-btn" [class.on]="policy.enabled" [disabled]="togglingPolicy === policy.chunkId" (click)="togglePolicy(policy.chunkId)">
+                <span class="toggle-knob"></span>
+              </button>
+            </div>
+            <div class="policy-info">
+              <div class="policy-header">
+                <span class="policy-id">{{ policy.chunkId }}</span>
+                <span class="policy-source">{{ policy.source }}</span>
+              </div>
+              <p class="policy-content">{{ policy.content }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <hr class="divider" />
+  }
+
   <!-- Feedback Summary -->
   @if (feedbackSummary && feedbackSummary.totalReviews > 0) {
     <div class="stats-row">
@@ -86,6 +114,7 @@
       <button class="run-btn" (click)="runEval()" [disabled]="evalRunning">
         {{ evalRunning ? 'Running eval...' : 'Run Eval' }}
       </button>
+      <button class="clear-btn" (click)="clearEvalHistory()" [disabled]="evalRunning || (runs.length === 0 && !selectedRun)">Clear History</button>
     </div>
 
     @if (runs.length > 0) {
@@ -117,12 +146,11 @@
         <h3>{{ selectedRun.runId }} — {{ selectedRun.accuracy }}%</h3>
         <table>
           <thead>
-            <tr><th>Doc</th><th>Summary</th><th>Expected</th><th>Actual</th><th>Result</th></tr>
+            <tr><th>Document</th><th>Expected</th><th>Actual</th><th>Result</th></tr>
           </thead>
           <tbody>
             @for (doc of selectedRun.results; track doc.docId) {
               <tr [class.pass]="doc.pass" [class.fail]="!doc.pass">
-                <td>{{ doc.docId }}</td>
                 <td>{{ doc.summary }}</td>
                 <td>{{ doc.expected }}</td>
                 <td>{{ doc.actual }}</td>

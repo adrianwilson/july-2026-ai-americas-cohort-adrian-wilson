@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService, FeedbackSummary, EvalRun, EvalComparison } from './api.service';
+import { ApiService, FeedbackSummary, EvalRun, EvalComparison, PolicyEntry } from './api.service';
 
 @Component({
   selector: 'app-feedback',
@@ -14,6 +14,10 @@ export class FeedbackComponent implements OnInit {
   feedbackSummary: FeedbackSummary | null = null;
   error = '';
 
+  // Policies
+  policies: PolicyEntry[] = [];
+  togglingPolicy = '';
+
   // Eval
   runs: EvalRun[] = [];
   selectedRun: EvalRun | null = null;
@@ -24,8 +28,28 @@ export class FeedbackComponent implements OnInit {
   constructor(private api: ApiService) {}
 
   ngOnInit(): void {
+    this.loadPolicies();
     this.loadSummary();
     this.loadHistory();
+  }
+
+  loadPolicies(): void {
+    this.api.getPolicies().subscribe({
+      next: (policies) => this.policies = policies,
+      error: () => {}
+    });
+  }
+
+  togglePolicy(chunkId: string): void {
+    this.togglingPolicy = chunkId;
+    this.api.togglePolicy(chunkId).subscribe({
+      next: (result) => {
+        const policy = this.policies.find(p => p.chunkId === result.chunkId);
+        if (policy) policy.enabled = result.enabled;
+        this.togglingPolicy = '';
+      },
+      error: () => this.togglingPolicy = ''
+    });
   }
 
   loadSummary(): void {
@@ -47,6 +71,17 @@ export class FeedbackComponent implements OnInit {
     this.api.getEvalHistory().subscribe({
       next: (runs) => this.runs = runs,
       error: () => this.runs = []
+    });
+  }
+
+  clearEvalHistory(): void {
+    this.api.clearEvalHistory().subscribe({
+      next: () => {
+        this.runs = [];
+        this.selectedRun = null;
+        this.comparison = null;
+      },
+      error: () => {}
     });
   }
 

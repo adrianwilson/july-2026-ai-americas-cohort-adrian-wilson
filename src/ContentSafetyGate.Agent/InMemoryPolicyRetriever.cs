@@ -13,6 +13,7 @@ public class InMemoryPolicyRetriever : IPolicyRetriever
 
     public Task IndexAsync(IEnumerable<PolicyChunk> chunks)
     {
+        _chunks.Clear();
         _chunks.AddRange(chunks);
         return Task.CompletedTask;
     }

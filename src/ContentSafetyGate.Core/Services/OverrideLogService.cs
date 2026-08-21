@@ -87,8 +87,10 @@ public class OverrideLogService
             goldRows = JsonSerializer.Deserialize<List<Dictionary<string, object?>>>(json, _goldJsonOptions) ?? [];
         }
 
-        // Check for duplicate
+        // Check for duplicate by doc_id or identical raw_text
         if (goldRows.Any(r => r.TryGetValue("doc_id", out var id) && id?.ToString() == docId))
+            return false;
+        if (goldRows.Any(r => r.TryGetValue("raw_text", out var text) && text?.ToString() == record.RawText))
             return false;
 
         // Build the new gold row

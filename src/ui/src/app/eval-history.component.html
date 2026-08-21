@@ -4,6 +4,7 @@
     <button class="run-btn" (click)="runEval()" [disabled]="running">
       {{ running ? 'Running eval...' : 'Run Eval' }}
     </button>
+    <button class="clear-btn" (click)="clearHistory()" [disabled]="running || runs.length === 0">Clear History</button>
   </div>
 
   @if (error) {
