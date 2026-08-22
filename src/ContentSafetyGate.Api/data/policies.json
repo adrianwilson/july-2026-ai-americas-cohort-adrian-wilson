@@ -33,6 +33,6 @@
     "chunkId": "POL-006",
     "source": "Administrative Documents",
     "content": "Internal memos, checklists, processing notes, policy bulletins, and administrative correspondence that contain only dates, case reference numbers, or document counts are not PII. Dates appearing as deadlines, effective dates, or processing dates in these documents are administrative dates, not dates of birth, even if the PII masker tags them as DOB. These should be classified as allow unless they also contain personal information such as names, addresses, or SINs.",
-    "enabled": true
+    "enabled": false
   }
 ]

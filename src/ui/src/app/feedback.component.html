@@ -128,11 +128,6 @@
               <div class="run-id">{{ run.runId }}</div>
               <div class="run-meta">{{ run.correct }}/{{ run.total }} correct</div>
             </div>
-            @if (i < runs.length - 1) {
-              <button class="compare-btn" (click)="compareWithPrevious(run); $event.stopPropagation()">
-                Compare
-              </button>
-            }
           </div>
         }
       </div>
