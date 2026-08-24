@@ -62,7 +62,7 @@ The agent never has access to raw documents or real personal data.
 |-------|-------------|-------------------|
 | Language | C# / .NET 10 | Same |
 | LLM | Claude via Anthropic API | Amazon Bedrock (Claude) |
-| Agent framework | Semantic Kernel | Same |
+| Agent framework | Anthropic .NET SDK (tool-use loop) | Semantic Kernel or Anthropic SDK via Bedrock |
 | Retrieval | In-memory keyword matching | OpenSearch / pgvector with embeddings |
 | PII masking | Regex-based (Presidio-style) | Microsoft Presidio or AWS Comprehend |
 | OCR | Placeholder | Amazon Textract |
@@ -174,4 +174,14 @@ docs/
 
 ## Lessons Learned
 
-*To be completed after final eval pass and demo.*
+**Deterministic gates catch more than you expect, but also create new problems.** The regex-based PII masker correctly catches SINs, emails, and bank account numbers at zero model cost. But it also introduces false positives: a deadline date like `2024-09-30` in an administrative memo gets tagged as a date of birth because the regex can't distinguish context. The masker is a trust boundary, but its mistakes become the agent's inputs.
+
+**Policy is the right layer to fix masker false positives.** Rather than making the regex smarter (which risks missing real PII), we added POL-006 to teach the agent that dates in administrative documents are not personal data. The agent reasons about document type and context to override a false PII tag. This keeps the masker conservative and the agent interpretive, which is the correct division of responsibility.
+
+**The feedback loop is the product, not the classification.** The most valuable part of the system is not the agent's verdict on any single document. It is the cycle: agent misclassifies, caseworker overrides, override gets promoted to the gold dataset, eval score drops, policy gets updated, eval confirms the fix. Without this loop, the same false positive repeats silently forever.
+
+**The gold dataset is a test suite, not training data.** The agent never reads the gold dataset during classification. It exists solely for the eval runner to score the system after a change. Promoting an override to the gold dataset does not fix anything. It makes the failure visible and permanent so that the fix (a policy change) can be measured and regressions caught.
+
+**Agentic RAG earns its complexity through policy conflict resolution.** Standard RAG would retrieve the right policies but get one shot at answering. The agent queries twice, sees the conflict between POL-002 (flag documents with DOB) and POL-006 (administrative dates are not DOB), and reasons about which takes precedence for this document type. That second retrieval step is where the agentic loop pays for itself.
+
+**Advisory-only is an architectural constraint, not a limitation.** The agent never enforces a decision. This is deliberate: in a benefits administration context, the cost of a false block (denying a legitimate applicant) outweighs the cost of a false allow (sending a clean document to review). Human authority over final decisions is a design requirement, not a missing feature.
