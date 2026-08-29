@@ -1,7 +1,7 @@
 # AI Upload Content Safety Gate
 
-**Cohort:** InfoQ Certified AI Engineering, July 2026, Cohort 1
-**Team:** Adrian Wilson (solo)
+**Cohort:** july-2026-ai-americas-cohort
+**Participant:** Adrian Wilson
 **Theme:** Engineering on Shifting Ground: Building Dependable Systems on Undependable Components
 
 ## System Description
